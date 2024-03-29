@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
-import seaVertexShader from "./shaders/water/vertex.glsl";
-import seaFragmentShader from "./shaders/water/fragment.glsl";
+import planeWaterVertexShader from "./shaders/planeWater/vertex.glsl";
+import planeWaterFragmentShader from "./shaders/planeWater/fragment.glsl";
 
 /**
  * Base
@@ -30,10 +30,12 @@ debugObj.depthColor = new THREE.Color("#186691");
 debugObj.surfaceColor = new THREE.Color("#9bd8ff");
 debugObj.foamColor = new THREE.Color("#ffffff");
 
+debugObj.fogColor = new THREE.Color("#9ed2ff");
+
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
-    vertexShader: seaVertexShader,
-    fragmentShader: seaFragmentShader,
+    vertexShader: planeWaterVertexShader,
+    fragmentShader: planeWaterFragmentShader,
     fog: true,
     uniforms: {
         uTime: { value: 0 },
@@ -165,6 +167,19 @@ foamFolder
     .step(0.001)
     .name("Multiplier");
 
+scene.background = new THREE.Color(debugObj.fogColor);
+scene.fog = new THREE.Fog(debugObj.fogColor, 1, 3);
+
+const fogFolder = gui.addFolder("Fog").close();
+fogFolder
+    .addColor(scene.fog, "color")
+    .name("Color")
+    .onChange((value) => {
+        scene.background = value;
+    });
+fogFolder.add(scene.fog, "near").min(0).max(2).step(0.001).name("Near");
+fogFolder.add(scene.fog, "far").min(1).max(10).step(0.001).name("Far");
+
 /**
  * Sizes
  */
@@ -194,9 +209,6 @@ window.addEventListener("resize", () => {
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
 camera.position.set(1, 1, 1);
 scene.add(camera);
-
-scene.background = new THREE.Color("#fd9eff");
-scene.fog = new THREE.Fog("#fd9eff", 1, 3);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);

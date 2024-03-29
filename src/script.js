@@ -1,94 +1,235 @@
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import GUI from 'lil-gui'
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import GUI from "lil-gui";
+import seaVertexShader from "./shaders/water/vertex.glsl";
+import seaFragmentShader from "./shaders/water/fragment.glsl";
 
 /**
  * Base
  */
 // Debug
-const gui = new GUI({ width: 340 })
+const gui = new GUI({ width: 340 });
+const debugObj = {};
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl')
+const canvas = document.querySelector("canvas.webgl");
 
 // Scene
-const scene = new THREE.Scene()
+const scene = new THREE.Scene();
 
 /**
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
+const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512);
+const sphere = new THREE.BoxGeometry(1, 1, 1, 10, 10, 10);
+
+//Colors
+
+debugObj.depthColor = new THREE.Color("#186691");
+debugObj.surfaceColor = new THREE.Color("#9bd8ff");
+debugObj.foamColor = new THREE.Color("#ffffff");
 
 // Material
-const waterMaterial = new THREE.MeshBasicMaterial()
+const waterMaterial = new THREE.ShaderMaterial({
+    vertexShader: seaVertexShader,
+    fragmentShader: seaFragmentShader,
+    fog: true,
+    uniforms: {
+        uTime: { value: 0 },
+        uBigWavesElevation: { value: 0.15 },
+        uBigWavesFrequency: {
+            value: new THREE.Vector2(3.5, 2.0),
+        },
+        uBigWavesSpeed: { value: 0.6 },
+
+        uSmallWavesCount: { value: 3.0 },
+        uSmallWavesFrequency: { value: 3.0 },
+        uSmallWavesElevation: { value: 0.15 },
+        uSmallWavesSpeed: { value: 0.2 },
+
+        uFoamColor: { value: debugObj.foamColor },
+        uFoamOffset: { value: 0.01 },
+        uFoamMultiplier: { value: 10.0 },
+
+        uDepthColor: { value: debugObj.depthColor },
+        uSurfaceColor: { value: debugObj.surfaceColor },
+        uColorOffset: { value: 0.25 },
+        uColorMultiplier: { value: 2.0 },
+        ...THREE.UniformsLib["fog"],
+    },
+});
 
 // Mesh
-const water = new THREE.Mesh(waterGeometry, waterMaterial)
-water.rotation.x = - Math.PI * 0.5
-scene.add(water)
+const water = new THREE.Mesh(waterGeometry, waterMaterial);
+water.rotation.x = -Math.PI * 0.5;
+scene.add(water);
+
+//Gui
+const bigWaves = gui.addFolder("Big Waves").close();
+bigWaves
+    .add(waterMaterial.uniforms.uBigWavesFrequency.value, "x")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Frequency X");
+bigWaves
+    .add(waterMaterial.uniforms.uBigWavesFrequency.value, "y")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Frequency Y");
+bigWaves
+    .add(waterMaterial.uniforms.uBigWavesElevation, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Elevation");
+bigWaves
+    .add(waterMaterial.uniforms.uBigWavesSpeed, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Speed");
+
+const smallWaves = gui.addFolder("Small Waves").close();
+smallWaves
+    .add(waterMaterial.uniforms.uSmallWavesCount, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Count");
+smallWaves
+    .add(waterMaterial.uniforms.uSmallWavesFrequency, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Frequency");
+smallWaves
+    .add(waterMaterial.uniforms.uSmallWavesElevation, "value")
+    .min(0)
+    .max(2)
+    .step(0.001)
+    .name("Elevation");
+smallWaves
+    .add(waterMaterial.uniforms.uSmallWavesSpeed, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Speed");
+
+const colorsFolder = gui.addFolder("Colors").close();
+colorsFolder
+    .addColor(debugObj, "surfaceColor")
+    .name("Surface color")
+    .onChange((value) => {
+        waterMaterial.uniforms.uSurfaceColor.value = value;
+    });
+
+colorsFolder
+    .addColor(debugObj, "depthColor")
+    .name("Depth color")
+    .onChange((value) => {
+        waterMaterial.uniforms.uDepthColor.value = value;
+    });
+colorsFolder
+    .add(waterMaterial.uniforms.uColorOffset, "value")
+    .min(0)
+    .max(3)
+    .step(0.001)
+    .name("Offset");
+colorsFolder
+    .add(waterMaterial.uniforms.uColorMultiplier, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Multiplier");
+
+const foamFolder = gui.addFolder("Foam").close();
+foamFolder
+    .addColor(debugObj, "foamColor")
+    .name("Foam color")
+    .onChange((value) => {
+        waterMaterial.uniforms.uFoamColor.value = value;
+    });
+foamFolder
+    .add(waterMaterial.uniforms.uFoamOffset, "value")
+    .min(0)
+    .max(3)
+    .step(0.001)
+    .name("Offset");
+foamFolder
+    .add(waterMaterial.uniforms.uFoamMultiplier, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("Multiplier");
 
 /**
  * Sizes
  */
 const sizes = {
     width: window.innerWidth,
-    height: window.innerHeight
-}
+    height: window.innerHeight,
+};
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener("resize", () => {
     // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+    sizes.width = window.innerWidth;
+    sizes.height = window.innerHeight;
 
     // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
+    camera.aspect = sizes.width / sizes.height;
+    camera.updateProjectionMatrix();
 
     // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
 
 /**
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(1, 1, 1)
-scene.add(camera)
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+camera.position.set(1, 1, 1);
+scene.add(camera);
+
+scene.background = new THREE.Color("#fd9eff");
+scene.fog = new THREE.Fog("#fd9eff", 1, 3);
 
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-})
-renderer.setSize(sizes.width, sizes.height)
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    canvas: canvas,
+});
+renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
  * Animate
  */
-const clock = new THREE.Clock()
+const clock = new THREE.Clock();
 
-const tick = () =>
-{
-    const elapsedTime = clock.getElapsedTime()
+const tick = () => {
+    const elapsedTime = clock.getElapsedTime();
+
+    //Update materials
+    waterMaterial.uniforms.uTime.value = elapsedTime;
 
     // Update controls
-    controls.update()
+    controls.update();
 
     // Render
-    renderer.render(scene, camera)
+    renderer.render(scene, camera);
 
     // Call tick again on the next frame
-    window.requestAnimationFrame(tick)
-}
+    window.requestAnimationFrame(tick);
+};
 
-tick()
+tick();

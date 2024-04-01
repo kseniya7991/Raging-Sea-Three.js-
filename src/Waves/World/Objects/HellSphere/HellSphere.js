@@ -1,0 +1,156 @@
+import * as THREE from "three";
+import Waves from "../../../Waves";
+import Environment from "../../Environment";
+
+//@ts-ignore
+import vertexShader from "./shaders/vertex.glsl";
+
+//@ts-ignore
+import fragmentShader from "./shaders/fragment.glsl";
+
+export default class HellSphere {
+    constructor() {
+        this.waves = new Waves();
+
+        this.time = this.waves.time;
+        this.debug = this.waves.debug;
+        this.scene = this.waves.scene;
+        this.renderer = this.waves.renderer;
+        this.resources = this.waves.resources;
+
+        this.initComponent();
+    }
+
+    initComponent = () => {
+        this.setDebugObj();
+
+        this.setGeometry();
+        this.setMaterial();
+        this.setMesh();
+        this.setDebug();
+
+        this.destroy();
+    };
+
+    setDebugObj = () => {
+        this.debugObj = {
+            depthColor: new THREE.Color("#ff0000"),
+            surfaceColor: new THREE.Color("#000000"),
+            fogColor: new THREE.Color("#9ed2ff"),
+        };
+    };
+
+    setGeometry = () => {
+        this.geometry = new THREE.SphereGeometry(0.5, 150, 150);
+    };
+
+    setMaterial = () => {
+        this.material = new THREE.ShaderMaterial({
+            vertexShader,
+            fragmentShader,
+            fog: true,
+            transparent: true,
+            uniforms: {
+                uTime: { value: 0 },
+                uBigWavesElevation: { value: 0.05 },
+                uBigWavesFrequency: {
+                    value: new THREE.Vector3(10.0, 15.0, 0.0),
+                },
+                uBigWavesSpeed: { value: 2.0 },
+
+                uSmallWavesCount: { value: 4.0 },
+                uSmallWavesFrequency: { value: 4.0 },
+                uSmallWavesElevation: { value: 0.2 },
+                uSmallWavesSpeed: { value: 0.2 },
+
+                uDepthColor: { value: this.debugObj?.depthColor },
+                uSurfaceColor: { value: this.debugObj?.surfaceColor },
+                uColorOffset: { value: 0.3 },
+                uColorMultiplier: { value: 3.2 },
+                ...THREE.UniformsLib["fog"],
+            },
+        });
+    };
+
+    setMesh = () => {
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.rotation.x = -Math.PI * 0.5;
+        this.scene?.add(this.mesh);
+    };
+
+    setDebug = () => {
+        if (!this.debug || !this.debug.gui) return;
+        this.addBigWavesTweaks();
+        this.addSmallWavesTweaks();
+        this.addColorsTweaks();
+    };
+
+    addBigWavesTweaks = () => {
+        const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
+        bigWaves
+            .add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001)
+            .name("Frequency X");
+        bigWaves
+            .add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 20, 0.001)
+            .name("Frequency Y");
+        bigWaves
+            .add(this.material?.uniforms.uBigWavesElevation, "value", 0, 10, 0.001)
+            .name("Elevation");
+        bigWaves
+            .add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001)
+            .name("Speed");
+    };
+
+    addSmallWavesTweaks = () => {
+        const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
+
+        smallWaves
+            .add(this.material.uniforms.uSmallWavesCount, "value", 0, 10, 0.001)
+            .name("Count");
+        smallWaves
+            .add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 10, 0.001)
+            .name("Frequency");
+        smallWaves
+            .add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001)
+            .name("Elevation");
+        smallWaves
+            .add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001)
+            .name("Speed");
+    };
+
+    addColorsTweaks = () => {
+        const colorsFolder = this.debug.gui?.addFolder("Colors").close();
+        colorsFolder
+            .addColor(this.debugObj, "surfaceColor")
+            .name("Surface color")
+            .onChange((value) => {
+                this.material.uniforms.uSurfaceColor.value = value;
+            });
+
+        colorsFolder
+            .addColor(this.debugObj, "depthColor")
+            .name("Depth color")
+            .onChange((value) => {
+                this.material.uniforms.uDepthColor.value = value;
+            });
+        colorsFolder
+            .add(this.material.uniforms.uColorOffset, "value", -1, 1, 0.001)
+            .name("Offset");
+        colorsFolder
+            .add(this.material.uniforms.uColorMultiplier, "value", 0, 10, 0.001)
+            .name("Multiplier");
+    };
+
+    update = () => {
+        this.material.uniforms.uTime.value = this.time?.elapsed;
+    };
+
+    destroy = () => {
+        window.addEventListener("click", () => {
+            this.scene?.remove(this.mesh);
+            this.material?.dispose();
+            this.geometry?.dispose();
+        });
+    };
+}

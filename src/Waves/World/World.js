@@ -1,7 +1,11 @@
 import * as THREE from "three";
 import Waves from "../Waves";
 import Environment from "./Environment";
-import PlaneWaves from "./Waves/Plane/PlaneWaves";
+import PlaneWaves from "./Objects/Plane/PlaneWaves";
+import LiveSphere from "./Objects/LiveSphere/LiveSphere";
+import HellSphere from "./Objects/HellSphere/HellSphere";
+import PlaneWorld from "./Objects/PlaneWorld/PlaneWorld";
+import Fog from "./Fog";
 
 export default class World {
     constructor() {
@@ -14,17 +18,20 @@ export default class World {
 
     initComponent = () => {
         this.environment = new Environment();
-        this.planeWaves = new PlaneWaves();
-        /*  this.resources?.on(this.resources.eventName, () => {
-            this.environment = new Environment();
-            this.floor = new Floor();
-            console.log("test");
-            this.fox = new Fox();
-        }); */
+        this.planeWorld = new PlaneWorld();
+        // this.planeWaves = new PlaneWaves();
+        // this.liveSphere = new LiveSphere();
+        // this.hellSphere = new HellSphere();
+
+        this.fog = new Fog();
     };
 
     update = () => {
         this.planeWaves?.update();
+        this.liveSphere?.update();
+        this.hellSphere?.update();
+        this.planeWorld?.update();
+        this.planeLights?.update();
     };
 
     destroy = () => {

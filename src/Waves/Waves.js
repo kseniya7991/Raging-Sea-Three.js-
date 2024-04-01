@@ -58,7 +58,6 @@ export default class Waves {
         this.world?.update();
     };
 
-    //@ts-ignore
     destroy = () => {
         this.sizes?.destroy();
         this.time?.destroy();

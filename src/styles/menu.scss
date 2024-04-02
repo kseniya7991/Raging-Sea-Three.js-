@@ -6,6 +6,23 @@
         transform: translateY(-50%);
 
         list-style-type: none;
+
+        &:not(.hovered) {
+            .menu__item {
+                &.active {
+                    left: 50px;
+                    .menu {
+                        &__text::before {
+                            opacity: 1;
+                        }
+                    }
+                    &::before {
+                        opacity: 1;
+                        left: 50px;
+                    }
+                }
+            }
+        }
     }
 
     &__text {
@@ -35,12 +52,51 @@
             height: 100%;
 
             border-radius: 5px;
-            background-color: rgb(36, 58, 128);
+            background-color: rgb(84 120 139);
 
             opacity: 0;
 
             transition-property: opacity, left;
             transition-duration: 0.3s;
+        }
+    }
+
+    @keyframes changeColor {
+        0%,
+        100% {
+            background-color: rgb(84 120 139);
+        }
+        50% {
+            background-color: rgb(99 167 151);
+        }
+    }
+
+    @keyframes pull {
+        0%,
+        100% {
+            transform: translateX(calc(-100%));
+        }
+        30%,
+        85% {
+            transform: translateX(calc(-100%));
+        }
+        50%,
+        55% {
+            transform: translateX(calc(-100% + 20px));
+        }
+    }
+    @keyframes pullItem {
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+        20%,
+        65% {
+            transform: translateX(0);
+        }
+        40%,
+        45% {
+            transform: translateX(20px);
         }
     }
 
@@ -59,15 +115,30 @@
         transition-property: opacity, left;
         transition-duration: 0.3s;
 
-        @media (hover: hover) {
-            &:hover {
-                left: 50px;
-                &::before {
-                    opacity: 1;
-                    left: 50px;
-                }
+        &.anim {
+            animation: pullItem 0.5s;
+            &::before {
+                animation: pull 0.5s 0.1s;
+            }
+
+            .menu__text::before {
+                animation: changeColor 0.5s;
             }
         }
+
+        &.hovered {
+            left: 50px;
+            .menu {
+                &__text::before {
+                    opacity: 1;
+                }
+            }
+            &::before {
+                opacity: 1;
+                left: 50px;
+            }
+        }
+
         &::before {
             content: "";
             position: absolute;

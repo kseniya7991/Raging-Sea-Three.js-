@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import Waves from "../Waves";
 import Environment from "./Environment";
-import PlaneWaves from "./Objects/Plane/PlaneWaves";
+import RagingSea from "./Objects/Plane/RagingSea";
 import LiveSphere from "./Objects/LiveSphere/LiveSphere";
 import HellSphere from "./Objects/HellSphere/HellSphere";
-import PlaneWorld from "./Objects/PlaneWorld/PlaneWorld";
+import City from "./Objects/PlaneWorld/City";
 import Fog from "./Fog";
+
+const HTML_OBJ_SELECTOR = ".js-world__obj";
 
 export default class World {
     constructor() {
@@ -13,25 +15,42 @@ export default class World {
         this.scene = this.waves.scene;
         this.resources = this.waves.resources;
 
+        this.htmlObjects = document.querySelectorAll(HTML_OBJ_SELECTOR);
+        this.toggleEventName = "toggle";
+
         this.initComponent();
     }
 
     initComponent = () => {
         this.environment = new Environment();
-        this.planeWorld = new PlaneWorld();
-        // this.planeWaves = new PlaneWaves();
-        // this.liveSphere = new LiveSphere();
-        // this.hellSphere = new HellSphere();
+        this.ragingSea = new RagingSea();
+        this.city = new City();
+        this.liveSphere = new LiveSphere();
+        this.hellSphere = new HellSphere();
+
+        this.addListeners();
 
         this.fog = new Fog();
     };
 
+    addListeners = () => {
+        console.log(this.htmlObjects);
+        Array.from(this.htmlObjects).forEach((item) => {
+            item.addEventListener(this.toggleEventName, () => {
+                this.toggle(item);
+            });
+        });
+    };
+
+    toggle = (item) => {
+        this.hellSphere?.toggle(item);
+    };
+
     update = () => {
-        this.planeWaves?.update();
+        this.ragingSea?.update();
         this.liveSphere?.update();
         this.hellSphere?.update();
-        this.planeWorld?.update();
-        this.planeLights?.update();
+        this.city?.update();
     };
 
     destroy = () => {

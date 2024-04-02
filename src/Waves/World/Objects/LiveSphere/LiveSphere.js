@@ -19,20 +19,42 @@ export default class LiveSphere {
         this.scene = this.waves.scene;
         this.resources = this.waves.resources;
 
+        this.debugFolders = [];
+
+        this.eventName = "toggle";
+        this.isActiveHtml = this.htmlEl.classList.contains(ACTIVE_CLASS);
+        this.isInited = false;
+
         this.initComponent();
     }
 
     initComponent = () => {
         this.setDebugObj();
 
+        if (this.isActiveHtml) this.initMesh();
+
+        this.htmlEl?.addEventListener(this.eventName, () => {
+            this.initMesh();
+        });
+    };
+
+    toggle = (el) => {
+        console.log(el === this.htmlEl);
+        let isSameEl = el === this.htmlEl;
+        if (isSameEl) {
+            this.initMesh();
+        } else {
+            this.destroy();
+        }
+    };
+
+    initMesh = () => {
+        if (this.isInited) return;
         this.setGeometry();
         this.setMaterial();
         this.setMesh();
         this.setDebug();
-
-        if (this.htmlEl && !this.htmlEl.classList.contains(ACTIVE_CLASS)) {
-            this.destroy();
-        }
+        this.isInited = true;
     };
 
     setDebugObj = () => {
@@ -50,7 +72,7 @@ export default class LiveSphere {
         this.material = new THREE.ShaderMaterial({
             vertexShader,
             fragmentShader,
-            fog: false,
+            fog: true,
             transparent: true,
             uniforms: {
                 uTime: { value: 0 },
@@ -91,6 +113,8 @@ export default class LiveSphere {
 
     addBigWavesTweaks = () => {
         const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
+        this.debugFolders.push(bigWaves);
+
         bigWaves
             .add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001)
             .name("Frequency X");
@@ -107,6 +131,8 @@ export default class LiveSphere {
 
     addSmallWavesTweaks = () => {
         const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
+        this.debugFolders.push(smallWaves);
+
         smallWaves
             .add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 3, 0.001)
             .name("Frequency");
@@ -120,6 +146,8 @@ export default class LiveSphere {
 
     addColorsTweaks = () => {
         const colorsFolder = this.debug.gui?.addFolder("Colors").close();
+        this.debugFolders.push(colorsFolder);
+
         colorsFolder
             .addColor(this.debugObj, "surfaceColor")
             .name("Surface color")
@@ -142,12 +170,17 @@ export default class LiveSphere {
     };
 
     update = () => {
-        if (this.isActive) this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isInited) this.material.uniforms.uTime.value = this.time?.elapsed;
     };
 
     destroy = () => {
         this.scene?.remove(this.mesh);
         this.material?.dispose();
         this.geometry?.dispose();
+        this.isInited = false;
+
+        this.debugFolders.forEach((folder) => {
+            folder.destroy();
+        });
     };
 }

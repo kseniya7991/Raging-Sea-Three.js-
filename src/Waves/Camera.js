@@ -29,9 +29,13 @@ export default class Camera {
             CAMERA_NEAR,
             CAMERA_FAR
         );
-        this.instance.position.set(1, 1, 1);
+        this.instance.position.set(1, 1, 2);
 
         this.scene?.add(this.instance);
+    };
+
+    reset = () => {
+        this.instance.position.set(1, 1, 2);
     };
 
     initcontrols = () => {

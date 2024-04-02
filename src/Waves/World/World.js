@@ -43,6 +43,11 @@ export default class World {
     };
 
     toggle = (item) => {
+        this.waves.camera?.reset();
+
+        this.ragingSea?.toggle(item);
+        this.city?.toggle(item);
+        this.liveSphere?.toggle(item);
         this.hellSphere?.toggle(item);
     };
 

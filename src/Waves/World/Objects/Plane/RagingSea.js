@@ -19,20 +19,42 @@ export default class RagingSea {
         this.scene = this.waves.scene;
         this.resources = this.waves.resources;
 
+        this.debugFolders = [];
+
+        this.eventName = "toggle";
+        this.isActiveHtml = this.htmlEl.classList.contains(ACTIVE_CLASS);
+        this.isInited = false;
+
         this.initComponent();
     }
 
     initComponent = () => {
         this.setDebugObj();
 
+        if (this.isActiveHtml) this.initMesh();
+
+        this.htmlEl?.addEventListener(this.eventName, () => {
+            this.initMesh();
+        });
+    };
+
+    toggle = (el) => {
+        console.log(el === this.htmlEl);
+        let isSameEl = el === this.htmlEl;
+        if (isSameEl) {
+            this.initMesh();
+        } else {
+            this.destroy();
+        }
+    };
+
+    initMesh = () => {
+        if (this.isInited) return;
         this.setGeometry();
         this.setMaterial();
         this.setMesh();
         this.setDebug();
-
-        if (this.htmlEl && !this.htmlEl.classList.contains(ACTIVE_CLASS)) {
-            this.destroy();
-        }
+        this.isInited = true;
     };
 
     setDebugObj = () => {
@@ -95,6 +117,8 @@ export default class RagingSea {
 
     addBigWavesTweaks = () => {
         const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
+        this.debugFolders.push(bigWaves);
+
         bigWaves
             .add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001)
             .name("Frequency X");
@@ -111,6 +135,8 @@ export default class RagingSea {
 
     addSmallWavesTweaks = () => {
         const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
+        this.debugFolders.push(smallWaves);
+
         smallWaves
             .add(this.material.uniforms.uSmallWavesCount, "value", 0, 10, 0.001)
             .name("Count");
@@ -127,6 +153,8 @@ export default class RagingSea {
 
     addColorsTweaks = () => {
         const colorsFolder = this.debug.gui?.addFolder("Colors").close();
+        this.debugFolders.push(colorsFolder);
+
         colorsFolder
             .addColor(this.debugObj, "surfaceColor")
             .name("Surface color")
@@ -150,6 +178,8 @@ export default class RagingSea {
 
     addFoamTweaks = () => {
         const foamFolder = this.debug.gui?.addFolder("Foam").close();
+        this.debugFolders.push(foamFolder);
+
         foamFolder
             .addColor(this.debugObj, "foamColor")
             .name("Foam color")
@@ -165,12 +195,17 @@ export default class RagingSea {
     };
 
     update = () => {
-        if (this.isActive) this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isInited) this.material.uniforms.uTime.value = this.time?.elapsed;
     };
 
     destroy = () => {
         this.scene?.remove(this.mesh);
         this.material?.dispose();
         this.geometry?.dispose();
+        this.isInited = false;
+
+        this.debugFolders.forEach((folder) => {
+            folder.destroy();
+        });
     };
 }

@@ -2,15 +2,17 @@ import * as THREE from "three";
 import Waves from "../../../Waves";
 import Environment from "../../Environment";
 
-//@ts-ignore
 import vertexShader from "./shaders/vertex.glsl";
-
-//@ts-ignore
 import fragmentShader from "./shaders/fragment.glsl";
+
+const ACTIVE_CLASS = "active";
+const OBJECT_SELECTOR = ".js-world__live-sphere";
 
 export default class LiveSphere {
     constructor() {
         this.waves = new Waves();
+
+        this.htmlEl = document.querySelector(OBJECT_SELECTOR);
 
         this.time = this.waves.time;
         this.debug = this.waves.debug;
@@ -27,6 +29,10 @@ export default class LiveSphere {
         this.setMaterial();
         this.setMesh();
         this.setDebug();
+
+        if (this.htmlEl && !this.htmlEl.classList.contains(ACTIVE_CLASS)) {
+            this.destroy();
+        }
     };
 
     setDebugObj = () => {
@@ -77,7 +83,7 @@ export default class LiveSphere {
     };
 
     setDebug = () => {
-        if (!this.debug) return;
+        if (!this.debug || !this.debug.gui) return;
         this.addBigWavesTweaks();
         this.addSmallWavesTweaks();
         this.addColorsTweaks();
@@ -136,14 +142,12 @@ export default class LiveSphere {
     };
 
     update = () => {
-        this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isActive) this.material.uniforms.uTime.value = this.time?.elapsed;
     };
 
     destroy = () => {
-        window.addEventListener("click", () => {
-            this.scene?.remove(this.mesh);
-            this.material?.dispose();
-            this.geometry?.dispose();
-        });
+        this.scene?.remove(this.mesh);
+        this.material?.dispose();
+        this.geometry?.dispose();
     };
 }

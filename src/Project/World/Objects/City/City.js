@@ -1,23 +1,23 @@
 import * as THREE from "three";
-import Waves from "../../../Waves";
+import Project from "../../../Project";
 import Environment from "../../Environment";
 
 import vertexShader from "./shaders/vertex.glsl";
 import fragmentShader from "./shaders/fragment.glsl";
 
 const ACTIVE_CLASS = "active";
-const OBJECT_SELECTOR = ".js-world__live-sphere";
+const OBJECT_SELECTOR = ".js-world__city";
 
-export default class LiveSphere {
+export default class PlaneWorld {
     constructor() {
-        this.waves = new Waves();
+        this.project = new Project();
 
         this.htmlEl = document.querySelector(OBJECT_SELECTOR);
 
-        this.time = this.waves.time;
-        this.debug = this.waves.debug;
-        this.scene = this.waves.scene;
-        this.resources = this.waves.resources;
+        this.time = this.project.time;
+        this.debug = this.project.debug;
+        this.scene = this.project.scene;
+        this.resources = this.project.resources;
 
         this.debugFolders = [];
 
@@ -59,13 +59,13 @@ export default class LiveSphere {
 
     setDebugObj = () => {
         this.debugObj = {
-            depthColor: new THREE.Color("#ffd694"),
-            surfaceColor: new THREE.Color("#d60003"),
+            depthColor: new THREE.Color("#b3fcfc"),
+            surfaceColor: new THREE.Color("#036d94"),
         };
     };
 
     setGeometry = () => {
-        this.geometry = new THREE.SphereGeometry(0.5, 150, 150);
+        this.geometry = new THREE.PlaneGeometry(2, 2, 500, 500);
     };
 
     setMaterial = () => {
@@ -76,22 +76,14 @@ export default class LiveSphere {
             transparent: true,
             uniforms: {
                 uTime: { value: 0 },
-                uBigWavesElevation: { value: 0.075 },
-                uBigWavesFrequency: {
-                    value: new THREE.Vector2(1.5, 10.0),
-                },
-                uBigWavesSpeed: { value: 2.2 },
 
-                uSmallWavesCount: { value: 1.0 },
-                uSmallWavesFrequency: { value: 1.0 },
-                uSmallWavesElevation: { value: 0.8 },
-                uSmallWavesSpeed: { value: 0.2 },
+                uBuildingsElevation: { value: 0.2 },
+                uBuildingsCount: { value: 20.0 },
 
                 uDepthColor: { value: this.debugObj?.depthColor },
                 uSurfaceColor: { value: this.debugObj?.surfaceColor },
-                // uColorOffset: { value: 0.25 },
-                uColorOffset: { value: 0.3 },
-                uColorMultiplier: { value: 3.2 },
+                uColorOffset: { value: 0.4 },
+                uColorMultiplier: { value: 2.5 },
                 ...THREE.UniformsLib["fog"],
             },
         });
@@ -106,28 +98,16 @@ export default class LiveSphere {
 
     setDebug = () => {
         if (!this.debug || !this.debug.gui) return;
-        this.addBigWavesTweaks();
-        this.addSmallWavesTweaks();
+        this.addBuildingsTweaks();
         this.addColorsTweaks();
     };
 
-    addBigWavesTweaks = () => {
-        const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
-        this.debugFolders.push(bigWaves);
+    addBuildingsTweaks = () => {
+        const buildings = this.debug.gui?.addFolder("Buildings").close();
+        this.debugFolders.push(buildings);
 
-        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001).name("Frequency X");
-        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 30, 0.001).name("Frequency Y");
-        bigWaves.add(this.material?.uniforms.uBigWavesElevation, "value", 0, 2, 0.001).name("Elevation");
-        bigWaves.add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001).name("Speed");
-    };
-
-    addSmallWavesTweaks = () => {
-        const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
-        this.debugFolders.push(smallWaves);
-
-        smallWaves.add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 3, 0.001).name("Frequency");
-        smallWaves.add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001).name("Elevation");
-        smallWaves.add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001).name("Speed");
+        buildings.add(this.material.uniforms.uBuildingsCount, "value", 0, 10, 0.001).name("Count");
+        buildings.add(this.material.uniforms.uBuildingsElevation, "value", 0, 10, 0.001).name("Elevation");
     };
 
     addColorsTweaks = () => {

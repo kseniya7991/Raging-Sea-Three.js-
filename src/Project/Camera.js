@@ -1,4 +1,4 @@
-import Waves from "./Waves";
+import Project from "./Project";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -7,11 +7,11 @@ const CAMERA_FAR = 100;
 
 export default class Camera {
     constructor() {
-        this.waves = new Waves();
+        this.project = new Project();
 
-        this.sizes = this.waves.sizes;
-        this.scene = this.waves.scene;
-        this.canvas = this.waves.canvas;
+        this.sizes = this.project.sizes;
+        this.scene = this.project.scene;
+        this.canvas = this.project.canvas;
 
         this.initComponent();
     }

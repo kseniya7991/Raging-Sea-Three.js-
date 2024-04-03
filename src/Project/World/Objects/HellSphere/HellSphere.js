@@ -1,23 +1,27 @@
 import * as THREE from "three";
-import Waves from "../../../Waves";
+import Project from "../../../Project";
 import Environment from "../../Environment";
 
 import vertexShader from "./shaders/vertex.glsl";
 import fragmentShader from "./shaders/fragment.glsl";
 
-const ACTIVE_CLASS = "active";
-const OBJECT_SELECTOR = ".js-world__raging-sea";
+import EventEmitter from "../../../Utils/EventEmitter";
 
-export default class RagingSea {
+const ACTIVE_CLASS = "active";
+const OBJECT_SELECTOR = ".js-world__hell-sphere";
+
+export default class HellSphere extends EventEmitter {
     constructor() {
-        this.waves = new Waves();
+        super();
+        this.project = new Project();
 
         this.htmlEl = document.querySelector(OBJECT_SELECTOR);
 
-        this.time = this.waves.time;
-        this.debug = this.waves.debug;
-        this.scene = this.waves.scene;
-        this.resources = this.waves.resources;
+        this.time = this.project.time;
+        this.debug = this.project.debug;
+        this.scene = this.project.scene;
+        this.renderer = this.project.renderer;
+        this.resources = this.project.resources;
 
         this.debugFolders = [];
 
@@ -59,14 +63,14 @@ export default class RagingSea {
 
     setDebugObj = () => {
         this.debugObj = {
-            depthColor: new THREE.Color("#186691"),
-            surfaceColor: new THREE.Color("#9bd8ff"),
-            foamColor: new THREE.Color("#ffffff"),
+            depthColor: new THREE.Color("#ff0000"),
+            surfaceColor: new THREE.Color("#000000"),
+            fogColor: new THREE.Color("#9ed2ff"),
         };
     };
 
     setGeometry = () => {
-        this.geometry = new THREE.PlaneGeometry(2, 2, 500, 500);
+        this.geometry = new THREE.SphereGeometry(0.5, 150, 150);
     };
 
     setMaterial = () => {
@@ -74,27 +78,24 @@ export default class RagingSea {
             vertexShader,
             fragmentShader,
             fog: true,
+            transparent: true,
             uniforms: {
                 uTime: { value: 0 },
-                uBigWavesElevation: { value: 0.15 },
+                uBigWavesElevation: { value: 0.05 },
                 uBigWavesFrequency: {
-                    value: new THREE.Vector2(3.5, 2.0),
+                    value: new THREE.Vector3(10.0, 15.0, 0.0),
                 },
-                uBigWavesSpeed: { value: 0.6 },
+                uBigWavesSpeed: { value: 2.0 },
 
-                uSmallWavesCount: { value: 2.0 },
-                uSmallWavesFrequency: { value: 6.0 },
-                uSmallWavesElevation: { value: 0.1 },
-                uSmallWavesSpeed: { value: 0.4 },
-
-                uFoamColor: { value: this.debugObj?.foamColor },
-                uFoamOffset: { value: 0.01 },
-                uFoamMultiplier: { value: 12.0 },
+                uSmallWavesCount: { value: 4.0 },
+                uSmallWavesFrequency: { value: 4.0 },
+                uSmallWavesElevation: { value: 0.2 },
+                uSmallWavesSpeed: { value: 0.2 },
 
                 uDepthColor: { value: this.debugObj?.depthColor },
                 uSurfaceColor: { value: this.debugObj?.surfaceColor },
-                uColorOffset: { value: 0.2 },
-                uColorMultiplier: { value: 2.5 },
+                uColorOffset: { value: 0.3 },
+                uColorMultiplier: { value: 3.2 },
                 ...THREE.UniformsLib["fog"],
             },
         });
@@ -112,49 +113,31 @@ export default class RagingSea {
         this.addBigWavesTweaks();
         this.addSmallWavesTweaks();
         this.addColorsTweaks();
-        this.addFoamTweaks();
     };
 
     addBigWavesTweaks = () => {
         const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
         this.debugFolders.push(bigWaves);
 
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001)
-            .name("Frequency X");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 10, 0.001)
-            .name("Frequency Y");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesElevation, "value", 0, 10, 0.001)
-            .name("Elevation");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001)
-            .name("Speed");
+        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001).name("Frequency X");
+        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 20, 0.001).name("Frequency Y");
+        bigWaves.add(this.material?.uniforms.uBigWavesElevation, "value", 0, 10, 0.001).name("Elevation");
+        bigWaves.add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001).name("Speed");
     };
 
     addSmallWavesTweaks = () => {
         const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
         this.debugFolders.push(smallWaves);
 
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesCount, "value", 0, 10, 0.001)
-            .name("Count");
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 10, 0.001)
-            .name("Frequency");
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001)
-            .name("Elevation");
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001)
-            .name("Speed");
+        smallWaves.add(this.material.uniforms.uSmallWavesCount, "value", 0, 10, 0.001).name("Count");
+        smallWaves.add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 10, 0.001).name("Frequency");
+        smallWaves.add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001).name("Elevation");
+        smallWaves.add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001).name("Speed");
     };
 
     addColorsTweaks = () => {
         const colorsFolder = this.debug.gui?.addFolder("Colors").close();
         this.debugFolders.push(colorsFolder);
-
         colorsFolder
             .addColor(this.debugObj, "surfaceColor")
             .name("Surface color")
@@ -168,34 +151,14 @@ export default class RagingSea {
             .onChange((value) => {
                 this.material.uniforms.uDepthColor.value = value;
             });
-        colorsFolder
-            .add(this.material.uniforms.uColorOffset, "value", 0, 3, 0.001)
-            .name("Offset");
-        colorsFolder
-            .add(this.material.uniforms.uColorMultiplier, "value", 0, 10, 0.001)
-            .name("Multiplier");
-    };
-
-    addFoamTweaks = () => {
-        const foamFolder = this.debug.gui?.addFolder("Foam").close();
-        this.debugFolders.push(foamFolder);
-
-        foamFolder
-            .addColor(this.debugObj, "foamColor")
-            .name("Foam color")
-            .onChange((value) => {
-                this.material.uniforms.uFoamColor.value = value;
-            });
-        foamFolder
-            .add(this.material.uniforms.uFoamOffset, "value", 0, 3, 0.001)
-            .name("Offset");
-        foamFolder
-            .add(this.material.uniforms.uFoamMultiplier, "value", 0, 20, 0.001)
-            .name("Multiplier");
+        colorsFolder.add(this.material.uniforms.uColorOffset, "value", -1, 1, 0.001).name("Offset");
+        colorsFolder.add(this.material.uniforms.uColorMultiplier, "value", 0, 10, 0.001).name("Multiplier");
     };
 
     update = () => {
-        if (this.isInited) this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isInited) {
+            this.material.uniforms.uTime.value = this.time?.elapsed;
+        }
     };
 
     destroy = () => {

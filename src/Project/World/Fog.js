@@ -1,15 +1,15 @@
 import * as THREE from "three";
-import Waves from "../Waves";
+import Project from "../Project";
 import Environment from "./Environment";
 
 export default class Fog {
     constructor() {
-        this.waves = new Waves();
+        this.project = new Project();
 
-        this.time = this.waves.time;
-        this.debug = this.waves.debug;
-        this.scene = this.waves.scene;
-        this.resources = this.waves.resources;
+        this.time = this.project.time;
+        this.debug = this.project.debug;
+        this.scene = this.project.scene;
+        this.resources = this.project.resources;
 
         this.initComponent();
     }

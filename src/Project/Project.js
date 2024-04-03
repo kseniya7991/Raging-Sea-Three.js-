@@ -11,7 +11,7 @@ import Debug from "./Utils/Debug";
 
 let INSTANCE = null;
 
-export default class Waves {
+export default class Project {
     constructor(selector) {
         if (INSTANCE) {
             return INSTANCE;

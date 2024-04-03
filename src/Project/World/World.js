@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import Waves from "../Waves";
+import Project from "../Project";
 import Environment from "./Environment";
 import RagingSea from "./Objects/Plane/RagingSea";
 import LiveSphere from "./Objects/LiveSphere/LiveSphere";
@@ -11,9 +11,9 @@ const HTML_OBJ_SELECTOR = ".js-world__obj";
 
 export default class World {
     constructor() {
-        this.waves = new Waves();
-        this.scene = this.waves.scene;
-        this.resources = this.waves.resources;
+        this.project = new Project();
+        this.scene = this.project.scene;
+        this.resources = this.project.resources;
 
         this.htmlObjects = document.querySelectorAll(HTML_OBJ_SELECTOR);
         this.toggleEventName = "toggle";
@@ -43,7 +43,7 @@ export default class World {
     };
 
     toggle = (item) => {
-        this.waves.camera?.reset();
+        this.project.camera?.reset();
 
         this.ragingSea?.toggle(item);
         this.city?.toggle(item);

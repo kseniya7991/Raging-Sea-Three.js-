@@ -1,14 +1,14 @@
-import Waves from "./Waves";
+import Project from "./Project";
 import * as THREE from "three";
 
 export default class Renderer {
     constructor() {
-        this.waves = new Waves();
+        this.project = new Project();
 
-        this.canvas = this.waves.canvas;
-        this.sizes = this.waves.sizes;
-        this.scene = this.waves.scene;
-        this.camera = this.waves.camera;
+        this.canvas = this.project.canvas;
+        this.sizes = this.project.sizes;
+        this.scene = this.project.scene;
+        this.camera = this.project.camera;
 
         this.initComponent();
     }

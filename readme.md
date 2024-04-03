@@ -11,7 +11,8 @@ You can find them [here](https://gist.github.com/patriciogonzalezvivo/670c22f396
 
 ## Live
 
-The project is [live here](https://waving-shaders.vercel.app/)
+The project is live here (https://waving-shaders.vercel.app/)[https://waving-shaders.vercel.app/]
+Also you can play with some tweaks (https://waving-shaders.vercel.app/#debug)[https://waving-shaders.vercel.app/#debug]
 
 ## Technologies
 

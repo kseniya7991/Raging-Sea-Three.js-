@@ -4,7 +4,7 @@ const MENU_ITEM_SELECTOR = ".menu__item";
 const ACTIVE_CLASS = "active";
 const HOVERED_CLASS = "hovered";
 
-import EventEmitter from "./Waves/Utils/EventEmitter";
+import EventEmitter from "./Project/Utils/EventEmitter";
 
 const initMenu = () => {
     const menu = document.querySelector(MENU_SELECTOR);

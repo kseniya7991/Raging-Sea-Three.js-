@@ -12,10 +12,7 @@
         />
     </head>
     <body>
-        <div
-            class="preloader"
-            style="background-color: black; position: fixed; inset: 0; z-index: 10"
-        ></div>
+        <div class="preloader" style="background-color: black; position: fixed; inset: 0; z-index: 10"></div>
         <ul class="menu__list">
             <li class="menu__item active js-world__raging-sea js-world__obj">
                 <span class="menu__text">Raging Sea</span>
@@ -30,6 +27,7 @@
                 <span class="menu__text">City</span>
             </li>
         </ul>
+        <a href="/#debug" class="link" onclick="location.reload();">Debug page</a>
         <canvas class="webgl"></canvas>
         <script type="module" src="./script.js"></script>
     </body>

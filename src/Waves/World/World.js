@@ -4,7 +4,7 @@ import Environment from "./Environment";
 import RagingSea from "./Objects/Plane/RagingSea";
 import LiveSphere from "./Objects/LiveSphere/LiveSphere";
 import HellSphere from "./Objects/HellSphere/HellSphere";
-import City from "./Objects/PlaneWorld/City";
+import City from "./Objects/City/City";
 import Fog from "./Fog";
 
 const HTML_OBJ_SELECTOR = ".js-world__obj";

@@ -27,8 +27,15 @@
                 <span class="menu__text">City</span>
             </li>
         </ul>
-        <a href="/#debug" class="link" onclick="location.reload();">Debug page</a>
+        <a href="#debug" class="link" onclick="reloadAndNavigate(event)">Debug page</a>
         <canvas class="webgl"></canvas>
         <script type="module" src="./script.js"></script>
+
+        <script>
+            function reloadAndNavigate(event) {
+                window.location.href = window.location.origin + event.target.getAttribute("href"); // Переходим по ссылке
+                location.reload();
+            }
+        </script>
     </body>
 </html>

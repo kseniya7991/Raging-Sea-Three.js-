@@ -6,13 +6,14 @@ You can find them [here](https://gist.github.com/patriciogonzalezvivo/670c22f396
 
 ## Screenshots
 
-![example](https://github.com/kseniya7991/bowling-three-js/blob/master/example.png)
-![example2](https://github.com/kseniya7991/bowling-three-js/blob/master/example2.png)
+![example](https://github.com/kseniya7991//Noise-Shaders-Three.js/blob/master/example.png)
+![example2](https://github.com/kseniya7991//Noise-Shaders-Three.js/blob/master/example2.png)
 
 ## Live
 
-The project is live here (https://waving-shaders.vercel.app/)[https://waving-shaders.vercel.app/]
-Also you can play with some tweaks (https://waving-shaders.vercel.app/#debug)[https://waving-shaders.vercel.app/#debug]
+The project is live here https://waving-shaders.vercel.app/.
+
+Also you can play with some tweaks https://waving-shaders.vercel.app/#debug.
 
 ## Technologies
 

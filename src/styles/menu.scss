@@ -7,18 +7,20 @@
 
         list-style-type: none;
 
-        &:not(.hovered) {
-            .menu__item {
-                &.active {
-                    left: 50px;
-                    .menu {
-                        &__text::before {
-                            opacity: 1;
-                        }
-                    }
-                    &::before {
-                        opacity: 1;
+        @media (min-width: 768.1px) {
+            &:not(.hovered) {
+                .menu__item {
+                    &.active {
                         left: 50px;
+                        .menu {
+                            &__text::before {
+                                opacity: 1;
+                            }
+                        }
+                        &::before {
+                            opacity: 1;
+                            left: 50px;
+                        }
                     }
                 }
             }
@@ -61,45 +63,6 @@
         }
     }
 
-    @keyframes changeColor {
-        0%,
-        100% {
-            background-color: rgb(84 120 139);
-        }
-        50% {
-            background-color: rgb(99 167 151);
-        }
-    }
-
-    @keyframes pull {
-        0%,
-        100% {
-            transform: translateX(calc(-100%));
-        }
-        30%,
-        85% {
-            transform: translateX(calc(-100%));
-        }
-        50%,
-        55% {
-            transform: translateX(calc(-100% + 20px));
-        }
-    }
-    @keyframes pullItem {
-        0%,
-        100% {
-            transform: translateX(0);
-        }
-        20%,
-        65% {
-            transform: translateX(0);
-        }
-        40%,
-        45% {
-            transform: translateX(20px);
-        }
-    }
-
     &__item {
         position: relative;
         padding-block: 8px;
@@ -126,16 +89,18 @@
             }
         }
 
-        &.hovered {
-            left: 50px;
-            .menu {
-                &__text::before {
-                    opacity: 1;
-                }
-            }
-            &::before {
-                opacity: 1;
+        @media (hover: hover) {
+            &.hovered {
                 left: 50px;
+                .menu {
+                    &__text::before {
+                        opacity: 1;
+                    }
+                }
+                &::before {
+                    opacity: 1;
+                    left: 50px;
+                }
             }
         }
 
@@ -157,5 +122,87 @@
             transition-property: opacity, left;
             transition-duration: 0.3s;
         }
+    }
+
+    @media (max-width: 768px) {
+        &__list {
+            .menu__item {
+                &.active {
+                    left: 20px;
+                    .menu {
+                        &__text::before {
+                            opacity: 1;
+                        }
+                    }
+                    &::before {
+                        opacity: 1;
+                        left: 20px;
+                    }
+                }
+            }
+        }
+        &__item {
+            font-size: 25px;
+            padding-left: 20px;
+
+            &::before {
+                width: 30px;
+                top: 22px;
+            }
+        }
+    }
+
+    @media (max-width: 575px) {
+        &__list {
+            transform: unset;
+            top: unset;
+            bottom: 20px;
+        }
+        &__item {
+            font-size: 20px;
+            &::before {
+                width: 30px;
+                top: 22px;
+            }
+        }
+    }
+}
+
+@keyframes changeColor {
+    0%,
+    100% {
+        background-color: rgb(84 120 139);
+    }
+    50% {
+        background-color: rgb(99 167 151);
+    }
+}
+
+@keyframes pull {
+    0%,
+    100% {
+        transform: translateX(calc(-100%));
+    }
+    30%,
+    85% {
+        transform: translateX(calc(-100%));
+    }
+    50%,
+    55% {
+        transform: translateX(calc(-100% + 20px));
+    }
+}
+@keyframes pullItem {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20%,
+    65% {
+        transform: translateX(0);
+    }
+    40%,
+    45% {
+        transform: translateX(20px);
     }
 }

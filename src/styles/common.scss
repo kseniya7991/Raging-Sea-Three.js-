@@ -30,4 +30,9 @@ body {
     bottom: 20px;
     left: 50px;
     color: #fff;
+
+    @media (max-width: 575px) {
+        right: 20px;
+        left: unset;
+    }
 }

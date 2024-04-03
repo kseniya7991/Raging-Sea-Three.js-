@@ -115,33 +115,19 @@ export default class LiveSphere {
         const bigWaves = this.debug.gui?.addFolder("Big Waves").close();
         this.debugFolders.push(bigWaves);
 
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001)
-            .name("Frequency X");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 30, 0.001)
-            .name("Frequency Y");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesElevation, "value", 0, 10, 0.001)
-            .name("Elevation");
-        bigWaves
-            .add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001)
-            .name("Speed");
+        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "x", 0, 10, 0.001).name("Frequency X");
+        bigWaves.add(this.material?.uniforms.uBigWavesFrequency.value, "y", 0, 30, 0.001).name("Frequency Y");
+        bigWaves.add(this.material?.uniforms.uBigWavesElevation, "value", 0, 2, 0.001).name("Elevation");
+        bigWaves.add(this.material?.uniforms.uBigWavesSpeed, "value", 0, 10, 0.001).name("Speed");
     };
 
     addSmallWavesTweaks = () => {
         const smallWaves = this.debug.gui?.addFolder("Small Waves").close();
         this.debugFolders.push(smallWaves);
 
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 3, 0.001)
-            .name("Frequency");
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001)
-            .name("Elevation");
-        smallWaves
-            .add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001)
-            .name("Speed");
+        smallWaves.add(this.material.uniforms.uSmallWavesFrequency, "value", 0, 3, 0.001).name("Frequency");
+        smallWaves.add(this.material.uniforms.uSmallWavesElevation, "value", 0, 2, 0.001).name("Elevation");
+        smallWaves.add(this.material.uniforms.uSmallWavesSpeed, "value", 0, 10, 0.001).name("Speed");
     };
 
     addColorsTweaks = () => {
@@ -161,12 +147,8 @@ export default class LiveSphere {
             .onChange((value) => {
                 this.material.uniforms.uDepthColor.value = value;
             });
-        colorsFolder
-            .add(this.material.uniforms.uColorOffset, "value", 0, 3, 0.001)
-            .name("Offset");
-        colorsFolder
-            .add(this.material.uniforms.uColorMultiplier, "value", 0, 10, 0.001)
-            .name("Multiplier");
+        colorsFolder.add(this.material.uniforms.uColorOffset, "value", 0, 3, 0.001).name("Offset");
+        colorsFolder.add(this.material.uniforms.uColorMultiplier, "value", 0, 10, 0.001).name("Multiplier");
     };
 
     update = () => {

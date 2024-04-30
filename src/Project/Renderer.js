@@ -19,14 +19,22 @@ export default class Renderer {
             antialias: true,
         });
 
-        this.instance.toneMapping = THREE.CineonToneMapping;
+        this.instance.toneMapping = THREE.ACESFilmicToneMapping;
         this.instance.toneMappingExposure = 1.75;
         this.instance.shadowMap.enabled = true;
         this.instance.shadowMap.type = THREE.PCFSoftShadowMap;
 
         this.instance.setClearColor("#211d20");
 
+        // this.addAxesHelper();
+
         this.resize();
+    }
+
+    addAxesHelper() {
+        const axesHelper = new THREE.AxesHelper();
+        axesHelper.position.y += 0.3;
+        this.scene.add(axesHelper);
     }
 
     resize() {

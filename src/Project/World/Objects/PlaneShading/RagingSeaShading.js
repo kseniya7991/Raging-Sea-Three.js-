@@ -18,6 +18,7 @@ export default class RagingSeaShading {
         this.debug = this.project.debug;
         this.scene = this.project.scene;
         this.resources = this.project.resources;
+        this.audioHandler = this.project.audioHandler;
 
         this.debugFolders = [];
 
@@ -101,6 +102,8 @@ export default class RagingSeaShading {
                 uSmallWavesFrequency: { value: 4.0 },
                 uSmallWavesElevation: { value: 0.2 },
                 uSmallWavesSpeed: { value: 0.4 },
+
+                uVolume: { value: this.audioHandler.volume },
 
                 uFoamColor: { value: this.debugObj?.foamColor },
                 uFoamOffset: { value: 0.01 },
@@ -254,7 +257,11 @@ export default class RagingSeaShading {
     };
 
     update = () => {
-        if (this.isInited) this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isInited) {
+            this.material.uniforms.uTime.value = this.time?.elapsed;
+            this.material.uniforms.uVolume.value = this.audioHandler.volume;
+        }
+
         if (this.testObj) {
             this.testObj.position.y = this.calcBigWavesElevation(this.testObj.position);
         }

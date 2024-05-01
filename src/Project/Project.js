@@ -8,6 +8,7 @@ import World from "./World/World";
 import Resources from "./Utils/Resources";
 import sources from "./sources";
 import Debug from "./Utils/Debug";
+import AudioHandler from "./AudioHandler";
 
 let INSTANCE = null;
 
@@ -27,6 +28,7 @@ export default class Project {
         this.sizes = new Sizes();
         this.time = new Time();
 
+        this.audioHandler = new AudioHandler();
         //World
         this.resources = new Resources(sources);
         this.scene = new THREE.Scene();

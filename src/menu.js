@@ -10,6 +10,8 @@ const initMenu = () => {
     const menu = document.querySelector(MENU_SELECTOR);
     if (!menu) return;
     new Menu(menu);
+
+    //test
 };
 
 export class Menu extends EventEmitter {

@@ -18,6 +18,7 @@ export default class RagingSeaShading {
         this.debug = this.project.debug;
         this.scene = this.project.scene;
         this.resources = this.project.resources;
+        // this.audioHandler = this.project.audioHandler;
 
         this.debugFolders = [];
 
@@ -59,8 +60,8 @@ export default class RagingSeaShading {
 
     setDebugObj = () => {
         this.debugObj = {
-            depthColor: new THREE.Color("#d152ff"),
-            surfaceColor: new THREE.Color("#0ca7b3"),
+            depthColor: new THREE.Color("#000"),
+            surfaceColor: new THREE.Color("#00c6c8"),
             testObj: false,
         };
     };
@@ -83,9 +84,9 @@ export default class RagingSeaShading {
                 uBigWavesFrequency: {
                     value: new THREE.Vector2(3.5, 2.0),
                 },
-                uBigWavesSpeed: { value: 1.2 },
+                uBigWavesSpeed: { value: 0.7 },
 
-                uShift: { value: 0.01 },
+                uShift: { value: 0.026 },
                 uPointLight: { value: true },
                 uPointLightPos: { value: new THREE.Vector3(0.0, 0.5, 0.0) },
                 uPointLightIntensity: { value: 2.0 },
@@ -98,9 +99,11 @@ export default class RagingSeaShading {
                 uDirectionalLightSpecularPower: { value: 30.0 },
 
                 uSmallWavesCount: { value: 2.0 },
-                uSmallWavesFrequency: { value: 4.0 },
+                uSmallWavesFrequency: { value: 3.1 },
                 uSmallWavesElevation: { value: 0.2 },
-                uSmallWavesSpeed: { value: 0.4 },
+                uSmallWavesSpeed: { value: 0.2 },
+
+                // uVolume: { value: this.audioHandler.volume },
 
                 uFoamColor: { value: this.debugObj?.foamColor },
                 uFoamOffset: { value: 0.01 },
@@ -254,7 +257,11 @@ export default class RagingSeaShading {
     };
 
     update = () => {
-        if (this.isInited) this.material.uniforms.uTime.value = this.time?.elapsed;
+        if (this.isInited) {
+            this.material.uniforms.uTime.value = this.time?.elapsed;
+            // this.material.uniforms.uVolume.value = this.audioHandler.volume;
+        }
+
         if (this.testObj) {
             this.testObj.position.y = this.calcBigWavesElevation(this.testObj.position);
         }

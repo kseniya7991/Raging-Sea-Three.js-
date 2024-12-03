@@ -15,6 +15,8 @@ uniform float uSmallWavesFrequency;
 uniform float uSmallWavesElevation;
 uniform float uSmallWavesSpeed;
 
+uniform float uVolume;
+
 varying float vElevation;
 varying vec3 vNormal;
 varying vec3 vPosition;
@@ -30,7 +32,7 @@ float calcElevation(vec3 position) {
     //change to += to invert negative values to positive
     //smooth boobbles effect 
     for(float i = 1.0; i <= uSmallWavesCount; i++) {
-        elevation -= abs(cnoise3(vec3(position.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+        elevation -= abs(cnoise3(vec3(position.xz * uSmallWavesFrequency * i, uTime * (uSmallWavesSpeed))) * (uSmallWavesElevation) / i);
     }
 
     return elevation;

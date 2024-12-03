@@ -106,7 +106,7 @@ export default class PlaneWorld {
         const buildings = this.debug.gui?.addFolder("Buildings").close();
         this.debugFolders.push(buildings);
 
-        buildings.add(this.material.uniforms.uBuildingsCount, "value", 0, 10, 0.001).name("Count");
+        buildings.add(this.material.uniforms.uBuildingsCount, "value", 0, 30, 0.001).name("Count");
         buildings.add(this.material.uniforms.uBuildingsElevation, "value", 0, 10, 0.001).name("Elevation");
     };
 
